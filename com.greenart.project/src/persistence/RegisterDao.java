@@ -22,7 +22,7 @@ public class RegisterDao { // db session + mapper = 사용하게끔 메소드 생성
 		SqlSession sql = sqlSessionFactory.openSession();
 		List<Register> list = null;
 		try {
-			list = sql.selectList("registerMapper.selectAll");
+			list = sql.selectList("mybatis.registerMapper.selectAll");
 
 		} finally {
 			sql.close();
@@ -31,32 +31,39 @@ public class RegisterDao { // db session + mapper = 사용하게끔 메소드 생성
 		return list;
 	}
 
-	public void memberInsert() {
+	public void memberInsert(Register register) {
 		SqlSession sql = sqlSessionFactory.openSession();
-		
+
 		try {
-			
-		} catch(Exception e) {
+			sql.insert("mybatis.registerMapper.memberInsert", register);
+		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
-			
+		} finally {
+			sql.commit();
+			sql.close();
 		}
-		
+
 	}
 
 	public void memberDelete(int id) {
 		SqlSession sql = sqlSessionFactory.openSession();
-		sql.delete("registerMapper.deleteMember",id);
+		try {
+			sql.delete("mybatis.registerMapper.deleteMember", id);
+		} finally {
+			sql.commit();
+			sql.close();
+		}
+
 	}
 
-	public void memberUpdate(Register register) { 
+	public void memberUpdate(Register register) {
 		SqlSession sql = sqlSessionFactory.openSession();
-		sql.update("registerMapper.updateMember",register);
-		
+		sql.update("mybatis.registerMapper.updateMember", register);
+
 		try {
-			sql.selectOne("registerMapper, select Count");
-			
-		}finally {
+			sql.selectOne("mybatis.registerMapper.selectCount");
+
+		} finally {
 			sql.commit(); // 디비에 내용 변동이 생기면 commit
 			sql.close();
 		}
@@ -65,15 +72,15 @@ public class RegisterDao { // db session + mapper = 사용하게끔 메소드 생성
 
 	public int memberCount() {
 		SqlSession sql = sqlSessionFactory.openSession();
-		
-		int num =0;
+
+		int num = 0;
 		try {
-			sql.selectOne("registerMapper, select Count");
-			
-		}finally {
+			num = sql.selectOne("mybatis.registerMapper.selectCount");
+
+		} finally {
 			sql.commit(); // 디비에 내용 변동이 생기면 commit
 			sql.close();
 		}
-		return 0;
+		return num;
 	}
 }
